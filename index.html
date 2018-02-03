@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Weather</title>
+		<link REL=StyleSheet HREF="style.css" TYPE="text/css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="skycons.js"></script>
+		<script type="text/javascript">
+
+			function getLocation() {
+				if (navigator.geolocation) {
+					navigator.geolocation.getCurrentPosition(refresh);
+				} else {
+					alert("Este navegador no cuenta con soporte para geolocalización.");
+				}
+			}
+	
+			function refresh(position) {
+				$.ajax({
+					url: 'https://api.darksky.net/forecast/ea76e78f539ef7dae1879fd1a45d3628/'+position.coords.latitude+','+position.coords.longitude+'?units=uk2&lang=es',
+					method: 'get',
+					dataType: 'jsonp',
+					success: function (response) {
+						if (response.message != null) {
+							document.getElementById("demo").innerHTML = response.message;
+						}
+						else {
+							$(".icons").html('<canvas id="'+response.currently.icon+'" width="50" height="50"></canvas>');
+                            $(".main").html(response.currently.temperature+"°C");
+                            $(".rain").html((response.currently.precipProbability*100)+"%");
+                            $(".humidity").html(Math.floor((response.currently.humidity*100))+"%");
+                            $(".footer").html(response.currently.summary);
+
+					      var icons = new Skycons({"color": "#fff"}),
+					          list  = [ "clear-day", "clear-night", "partly-cloudy-day","partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind","fog" ],
+					          i;
+					      for(i = list.length; i--; )
+					        icons.set(list[i], list[i]);
+					      icons.play();
+
+
+                        }
+                    },
+                    error: function (err) {
+                    	alert(err);
+                    }
+                });
+			};
+
+			$(document).ready(function(){
+				getLocation();
+			});
+
+		</script>
+	</head>
+<body>
+
+<div class="container">
+
+		<button id="refreshBtn" onclick="getLocation()">
+			<img src="Refresh_icon.png" width="30px" height= "30px">
+		</button><br>
+
+	<div class="data">
+
+		<figure class="icons">
+      	</figure>
+
+		<div class="main"></div>
+
+		<div class="sub">
+			Humedad<br/>
+			<p class="humidity"></p>
+		</div>
+		<div class="sub">
+			Precipitaciones<br/>
+			<p class="rain"></p>
+		</div>
+
+		<div class="footer clear"></div>
+	</div>
+	
+
+
+
+</div>
+
+</body>
+</html>
+
