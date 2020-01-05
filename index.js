@@ -45,4 +45,7 @@
         }
     };
 
-    getLocation();
+    document.addEventListener('DOMContentLoaded', function(){ 
+        document.getElementById('refreshBtn').addEventListener('click', getLocation, false); // Setting refresh button
+        getLocation();
+    }, false);
